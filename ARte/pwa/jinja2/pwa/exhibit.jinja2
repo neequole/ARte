@@ -1,0 +1,42 @@
+{% extends '/pwa/base.jinja2' %}
+
+{% block content %}
+
+    <a-scene embedded arjs>
+        {% for marker in markers %}
+            {% if marker.patt == "hiro" %}
+                <a-marker type="pattern" preset="{{marker.patt}}">
+                    <a-box position='0 0.5 0' material='opacity: 0.5; side:double; color:red;'>
+                        <a-torus-knot radius='0.26' radius-tubular='0.05'>
+                            <a-animation attribute="rotation" to="360 0 0" dur="5000" easing='linear' repeat="indefinite"></a-animation>
+                        </a-torus-knot>
+                    </a-box>
+                </a-marker>
+            {% else %}
+                <a-assets>
+                    <canvas id="{{marker.patt}}" crossorigin="anonymous"></canvas>
+                </a-assets>
+
+                <script>
+                    console.log(document.getElementById('{{marker.patt}}'))
+                    loadGIF('/static/images/{{marker.gif}}.gif',document.getElementById('{{marker.patt}}'))
+                </script>
+
+                <a-marker type="pattern" url="static/patts/{{marker.patt}}.patt">
+                    <a-entity geometry="primitive: plane" position="{{marker.position}}" rotation="{{marker.rotation}}" material="src: #{{marker.patt}};"
+                        draw-canvas="{{marker.patt}}">
+                    </a-entity>
+                    {# <a-box material="shader:gif;src:url(static/images/{{marker.gif}}.gif);"
+                             gif="" 
+                             position="{{marker.position}}" 
+                             scale="{{marker.scale}}" 
+                             rotation="{{marker.rotation}}">
+                    </a-box> #}
+                </a-marker>
+            {% endif %}
+        {% endfor %}
+
+        <a-entity camera></a-entity>         
+    </a-scene>
+
+{% endblock %}
